@@ -1,7 +1,5 @@
 //
-// Manually adding elements to our visualization using D3.
-//
-// NOTE: This is not the best way to use D3, just a stepping stone on our way to understanding D3.
+// Now using a D3 data join to add our data to the visualization.
 //
 
 const data = [
@@ -60,9 +58,14 @@ window.onload = function () {
     const width = window.innerWidth; // Dimensions for our visualization are derived from the size of the browser window.
     const height = window.innerHeight;
 
-    var earthRadius = 50; // Set the radius of the earth to 50 pixels.
-    var orbitDistance = 10; // The distance from our earth that space junk will orbit.
+    var earthRadius = 6371; // This is the real radius of the earth!
 
+    var maxOrbitRadius = d3.max(data.map(x => earthRadius + x.PERIGEE)); // Determine the maximum orbit distance from the earth.
+
+    var radiusScale = d3.scaleLinear() // Create a scale for the radius.
+        .domain([0, maxOrbitRadius])
+        .range([0, (width/2) - 100]); // Adding padding (100px) so we get some whitespace around our visualization.
+    
     var svgElement = d3.select("svg.chart") // Select the root SVG element for our visualization.
         .attr("width", width) // Set the width and height of the elemnt.
         .attr("height", height);
@@ -70,13 +73,15 @@ window.onload = function () {
     svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
         .attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
         .attr("transform", "translate(" + (width/2) + ", " + (height/2) + ")") // Position the circle in the middle of the visualization.
-        .attr("r", earthRadius); // Set the radius the earth.
+        .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
 
-    for (var rowIndex = 0; rowIndex < data.length; ++rowIndex) { // Manually loop our data and add it to the visualization.
-        svgElement.append("g") // Adding a group. This means we can have multiple sub-elements to comprise the visuals for a piece of space junk.
+    svgElement.selectAll("g") // Select all g elements.
+        .data(data) // 'Join' our data to the selection.
+        .enter() // Specify what happens for each incoming data point.
+            .append("g") // Append a group element for each data point.
             .attr("class", "junk") // Set CSS clas so we can style our space junk.
             .attr("transform", function(dataPoint, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
-                var orbitRadius = earthRadius + orbitDistance; // The distance from the center of the earth that the space junk is orbiting.
+                var orbitRadius = radiusScale(earthRadius + dataPoint.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
                 var point = pointOnCircle(orbitRadius, Math.random() * 360); // Choose a random position in orbit that is relative to the earth.
                 var x = (width/2) + point.x; // Translate the space junk coordinates into visualization-relative coordinates.
                 var y = (height/2) + point.y;
@@ -84,5 +89,4 @@ window.onload = function () {
             })
             .append("circle") // Add a circle to represent the space junk.
                 .attr("r", 5); // Hard-coded circle radius.
-    }
 };
