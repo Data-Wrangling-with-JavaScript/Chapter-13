@@ -1,0 +1,28 @@
+
+/* 
+Style the visual the represents the earth.
+*/
+.earth {
+    fill: #AADAFF;
+}
+
+/*
+Color code the different sizes of space junk.
+*/
+
+.junk.SMALL {
+    fill: yellow;
+}
+
+.junk.MEDIUM {
+    fill: orange;
+}
+
+.junk.LARGE {
+    fill: red;
+}
+
+.junk text {
+    fill: black;
+    font-size: 34;
+}

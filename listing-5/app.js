@@ -53,7 +53,7 @@ window.onload = function () {
                         return "translate(" + x + ", " + y + ")" ; // Synthesize an SVG 'transform' attribute.
                     })
                     .append("circle") // Add a circle to represent the space junk.
-                        .attr("r", 1); // Hard-coded circle radius.    
+                        .attr("r", 2); // Hard-coded circle radius.    
         })
         .catch(function (err) {
             console.error("Failed to load data file.");
