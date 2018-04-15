@@ -7,8 +7,8 @@
 
 window.onload = function () {
 
-    const width = window.innerWidth; // Dimensions for our visualization are derived from the size of the browser window.
-    const height = window.innerHeight;
+    var width = window.innerWidth; // Dimensions for our visualization are derived from the size of the browser window.
+    var height = window.innerHeight;
 
     var svgElement = d3.select("svg.chart") // Select the root SVG element for our visualization.
         .attr("width", width) // Set the width and height of the elemnt.
