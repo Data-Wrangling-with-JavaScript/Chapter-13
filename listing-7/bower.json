@@ -1,0 +1,21 @@
+{
+  "name": "listing-1",
+  "homepage": "https://github.com/Data-Wrangling-with-JavaScript/chapter-13",
+  "authors": [
+    "Ashley Davis <ashley@codecapers.com.au>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "d3": "^5.0.0",
+    "moment": "^2.22.1"
+  }
+}

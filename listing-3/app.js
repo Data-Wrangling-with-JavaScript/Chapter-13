@@ -38,7 +38,7 @@ window.onload = function () {
         var row = data[rowIndex];
         svgElement.append("g") // Adding a group. This means we can have multiple sub-elements to comprise the visuals for a piece of space junk.
             .attr("class", "junk") // Set CSS clas so we can style our space junk.
-            .attr("transform", function(dataPoint, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
+            .attr("transform", function () { // Set the transform element to position the space junk in orbit around the 'earth'.
                 var orbitRadius = radiusScale(earthRadius + row.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
                 var point = pointOnCircle(orbitRadius, Math.random() * 360); // Choose a random position in orbit that is relative to the earth.
                 var x = (width/2) + point.x; // Translate the space junk coordinates into visualization-relative coordinates.
@@ -53,42 +53,18 @@ window.onload = function () {
 var data = [
     {
         "OBJECT_NAME": "NOAA 16 DEB",
-        "COUNTRY": "US",
-        "PERIOD": 102.55,
-        "INCLINATION": 98.9,
-        "APOGEE": 910,
         "PERIGEE": 849,
-        "RCS_SIZE": "SMALL",
-        "LAUNCH": "21/09/2000"
       },
       {
         "OBJECT_NAME": "NOAA 16 DEB",
-        "COUNTRY": "US",
-        "PERIOD": 101.31,
-        "INCLINATION": 98.98,
-        "APOGEE": 864,
         "PERIGEE": 778,
-        "RCS_SIZE": "SMALL",
-        "LAUNCH": "21/09/2000"
       },
       {
         "OBJECT_NAME": "NOAA 16 DEB",
-        "COUNTRY": "US",
-        "PERIOD": 102.04,
-        "INCLINATION": 98.86,
-        "APOGEE": 898,
         "PERIGEE": 812,
-        "RCS_SIZE": "SMALL",
-        "LAUNCH": "21/09/2000"
       },
       {
         "OBJECT_NAME": "NOAA 16 DEB",
-        "COUNTRY": "US",
-        "PERIOD": 103.4,
-        "INCLINATION": 98.84,
-        "APOGEE": 991,
         "PERIGEE": 848,
-        "RCS_SIZE": "SMALL",
-        "LAUNCH": "21/09/2000"
       }
 ];

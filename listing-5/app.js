@@ -21,9 +21,7 @@ window.onload = function () {
     d3.json("data/data.json")
         .then(function (data) {
 
-            var filteredData = data.filter(x => x.RCS_SIZE) // Filter out data that is incomplete.
-                .filter(x => x.PERIGEE !== undefined)
-                .filter(x => x.PERIGEE <= maxDistanceFromEarth); // Filter out data beyond our limit.
+            var filteredData = data.filter(row => row.PERIGEE <= maxDistanceFromEarth); // Filter out data beyond our limit.
                             
             var maxOrbitRadius = d3.max(filteredData.map(x => earthRadius + x.PERIGEE)); // Determine the maximum orbit distance from the earth.
 
@@ -45,8 +43,8 @@ window.onload = function () {
                 .enter() // Specify what happens for each incoming data point.
                     .append("g") // Append a group element for each data point.
                     .attr("class", "junk") // Set CSS clas so we can style our space junk.
-                    .attr("transform", function(dataPoint, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
-                        var orbitRadius = radiusScale(earthRadius + dataPoint.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
+                    .attr("transform", function(row, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
+                        var orbitRadius = radiusScale(earthRadius + row.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
                         var point = pointOnCircle(orbitRadius, Math.random() * 360); // Choose a random position in orbit that is relative to the earth.
                         var x = (width/2) + point.x; // Translate the space junk coordinates into visualization-relative coordinates.
                         var y = (height/2) + point.y;

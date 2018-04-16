@@ -32,7 +32,7 @@ window.onload = function () {
     for (var rowIndex = 0; rowIndex < data.length; ++rowIndex) { // Manually loop our data and add it to the visualization.
         svgElement.append("g") // Adding a group. This means we can have multiple sub-elements to comprise the visuals for a piece of space junk.
             .attr("class", "junk") // Set CSS clas so we can style our space junk.
-            .attr("transform", function(dataPoint, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
+            .attr("transform", function(row, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
                 var orbitRadius = earthRadius + orbitDistance; // The distance from the center of the earth that the space junk is orbiting.
                 var point = pointOnCircle(orbitRadius, Math.random() * 360); // Choose a random position in orbit that is relative to the earth.
                 var x = (width/2) + point.x; // Translate the space junk coordinates into visualization-relative coordinates.
