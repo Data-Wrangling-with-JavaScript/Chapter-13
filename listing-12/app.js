@@ -18,7 +18,7 @@ window.onload = function () {
     var earthRadius = 6371; // This is the real radius of the earth!
     var maxDistanceFromEarth = 6000; // Let's put a limit on what we can display.
 
-    d3.json("data/data.json")
+    d3.json("data/us-space-junk.json")
         .then(function (data) {
 
             var filteredData = data.filter(row => row.PERIGEE <= maxDistanceFromEarth); // Filter out data beyond our limit.
