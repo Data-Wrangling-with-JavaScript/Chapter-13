@@ -2,12 +2,29 @@
 <html lang="en">
     <head>
         <meta charset="utf-8">
-        <title>D3 intro</title>
+        <title>Space junk visualization</title>
         <link rel="stylesheet" href="app.css">
         <script src="bower_components/d3/d3.js"></script>
         <script src="app.js"></script>
     </head>
     <body>
-        <svg class="chart"></svg>
+        <svg 
+            class="chart"
+            width="500"
+            height="500"
+            >
+            <g 
+                transform="translate(250, 250)"
+                >
+                <circle
+                    r="50"
+                    />
+                <text
+                    y="70"
+                    >
+                    The Earth
+                </text>
+            </g>
+        </svg>
     </body>
 </html>

@@ -1,0 +1,45 @@
+/*
+Set the background to 'black', because it represents space.
+*/
+body {
+    background: black;
+}
+
+.title-text {
+    fill: white;
+    font-size: 34px;
+}
+
+/* 
+Style the visual the represents the earth.
+*/
+.earth {
+    fill: #01499D;
+}
+
+/*
+Color code the different sizes of space junk.
+*/
+
+.junk.SMALL {
+    fill: yellow;
+}
+
+.junk.MEDIUM {
+    fill: orange;
+}
+
+.junk.LARGE {
+    fill: red;
+}
+
+.hover-title {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.hover-text {
+    fill: white;
+    text-anchor: middle;
+    font-size: 16px;
+}
