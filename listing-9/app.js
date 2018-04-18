@@ -30,7 +30,7 @@ window.onload = function () {
     var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
     theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
         .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
-        .attr("r", earthRadius); // Set the radius the earth.
+        .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
 
     var spaceJunk = svgElement.selectAll("g") // Select all g elements.
         .data(data) // 'Join' our data to the selection.
