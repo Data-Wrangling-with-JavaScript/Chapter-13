@@ -16,6 +16,7 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var earthRadius = 6371; // This is the real radius of the earth!
+    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
     var maxDistanceFromEarth = 6000; // Let's put a limit on what we can display.
 
     d3.json("data/us-space-junk.json")
@@ -42,14 +43,12 @@ window.onload = function () {
                 };
             };
 
-            function addHoverText (className, text, size, pos, offset) { // Helper function to add some hover text.
-                return svgElement // Add hover text.
+            function addText (className, text, pos, offset) { // Helper function to add some hover text.
+                svgElement // Add hover text.
                     .append("text") // Append the hover text to the end of the SVG so it is rendered over the top of everything else.
                         .attr("class", className) // Id the text so we can remove it later.
                         .attr("x", pos.x)
                         .attr("y", pos.y + offset) // Offset the Y position slightly so the text is below the space junk.
-                        .attr("font-size", size)
-                        .attr("text-anchor", "middle")
                         .text(text);
             };
 
@@ -60,14 +59,9 @@ window.onload = function () {
                         .attr("r", 6); // Make the hovered space junk larger.
             
                 var pos = computeSpaceJunkPosition(row);
-
-                const hoverTextIdentifier = "hovertext-" + index;
-
-                addHoverText(hoverTextIdentifier, row.OBJECT_NAME, 20, pos, 50)
-                    .attr("font-weight", "bold"); // Heading text.
-
-                addHoverText(hoverTextIdentifier, "Size: " + row.RCS_SIZE, 16, pos, 70);
-                addHoverText(hoverTextIdentifier, "Launched: " + row.LAUNCH, 16, pos, 85);
+                addText("hover-text hover-title", row.OBJECT_NAME, pos, 50);
+                addText("hover-text", "Size: " + row.RCS_SIZE, pos, 70);
+                addText("hover-text", "Launched: " + row.LAUNCH, pos, 85);
             };
             
             function unhover (row, index) { // Function called when a space junk is unhovered.
@@ -76,7 +70,7 @@ window.onload = function () {
                     .select("circle")
                         .attr("r", 2); // Revert the hovered space junk to normal size.
             
-                d3.selectAll(".hovertext-" + index)
+                d3.selectAll(".hover-text")
                     .remove(); // Remove all hover text.
             };
                         
@@ -84,24 +78,24 @@ window.onload = function () {
                 .attr("width", width) // Set the width and height of the elemnt.
                 .attr("height", height);
         
-            svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
-                .attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-                .attr("transform", "translate(" + (width/2) + ", " + (height/2) + ")") // Position the circle in the middle of the visualization.
+            var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
+            theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
+                .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
                 .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
 
-            svgElement.selectAll("g") // Select all g elements.
-                .data(filteredData) // 'Join' our data to the selection.
-                .enter() // Specify what happens for each incoming data point.
+            var spaceJunk = svgElement.selectAll("g") // Select all g elements.
+                .data(filteredData); // 'Join' our data to the selection.
+            spaceJunk.enter() // Specify what happens for each incoming data point.
                     .append("g") // Append a group element for each data point.
+                        .attr("class", function  (row) { // Set CSS clas so we can style our space junk.
+                            return "junk " + row.RCS_SIZE;
+                        })
+                        .attr("transform", function(row, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
+                            var pos = computeSpaceJunkPosition(row);
+                            return "translate(" + pos.x + ", " + pos.y + ")" ; // Synthesize an SVG 'transform' attribute.
+                        })
                     .on("mouseover", hover)
                     .on("mouseout", unhover)
-                    .attr("class", function  (row) { // Set CSS clas so we can style our space junk.
-                        return "junk " + row.RCS_SIZE;
-                    })
-                    .attr("transform", function(row, index) { // Set the transform element to position the space junk in orbit around the 'earth'.
-                        var pos = computeSpaceJunkPosition(row);
-                        return "translate(" + pos.x + ", " + pos.y + ")" ; // Synthesize an SVG 'transform' attribute.
-                    })
                     .append("circle") // Add a circle to represent the space junk.
                         .attr("r", 2); // Hard-coded circle radius.
         })

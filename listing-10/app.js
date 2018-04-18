@@ -16,6 +16,7 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var earthRadius = 6371; // This is the real radius of the earth!
+    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
     var maxDistanceFromEarth = 6000; // Let's put a limit on what we can display.
 
     d3.json("data/us-space-junk.json")
@@ -33,9 +34,9 @@ window.onload = function () {
                 .attr("width", width) // Set the width and height of the elemnt.
                 .attr("height", height);
         
-            svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
-                .attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-                .attr("transform", "translate(" + (width/2) + ", " + (height/2) + ")") // Position the circle in the middle of the visualization.
+            var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
+            theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
+                .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
                 .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
 
             svgElement.selectAll("g") // Select all g elements.

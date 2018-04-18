@@ -16,7 +16,7 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var earthRadius = 6371; // This is the real radius of the earth!
-
+    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
     var maxOrbitRadius = d3.max(data.map(x => earthRadius + x.PERIGEE)); // Determine the maximum orbit distance from the earth.
 
     var radiusScale = d3.scaleLinear() // Create a scale for the radius.
@@ -27,14 +27,14 @@ window.onload = function () {
         .attr("width", width) // Set the width and height of the elemnt.
         .attr("height", height);
 
-    svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
-        .attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-        .attr("transform", "translate(" + (width/2) + ", " + (height/2) + ")") // Position the circle in the middle of the visualization.
-        .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
+    var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
+    theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
+        .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
+        .attr("r", earthRadius); // Set the radius the earth.
 
-    svgElement.selectAll("g") // Select all g elements.
+    var spaceJunk = svgElement.selectAll("g") // Select all g elements.
         .data(data) // 'Join' our data to the selection.
-        .enter() // Specify what happens for each incoming data point.
+    spaceJunk.enter() // Specify what happens for each incoming data point.
             .append("g") // Append a group element for each data point.
             .attr("class", "junk") // Set CSS clas so we can style our space junk.
             .attr("transform", function(row, index) { // Set the transform element to position the space junk in orbit around the 'earth'.

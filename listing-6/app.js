@@ -11,13 +11,14 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var svgElement = d3.select("svg.chart") // Select the root SVG element for our visualization.
-        .attr("width", width) // Set the width and height of the elemnt.
+        .attr("width", width) // Set the width and height of the element.
         .attr("height", height);
 
     var earthRadius = 50; // Set the radius of the earth to 50 pixels.
+    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
 
-    svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
-        .attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-        .attr("transform", "translate(" + (width/2) + ", " + (height/2) + ")") // Position the circle in the middle of the visualization.
+    var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
+    theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
+        .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
         .attr("r", earthRadius); // Set the radius the earth.
 };

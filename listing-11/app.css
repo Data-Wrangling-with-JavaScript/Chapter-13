@@ -28,7 +28,14 @@ Color code the different sizes of space junk.
     fill: red;
 }
 
-.junk text {
-    fill: black;
-    font-size: 34;
+.hover-title {
+    font-weight: bold;
+    font-size: 20px;
 }
+
+.hover-text {
+    fill: white;
+    text-anchor: middle;
+    font-size: 16px;
+}
+
