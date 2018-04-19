@@ -18,8 +18,8 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var earthRadius = 6371; // This is the real radius of the earth!
-    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
-    var maxOrbitRadius = d3.max(data.map(x => earthRadius + x.PERIGEE)); // Determine the maximum orbit distance from the earth.
+    var earthTranslation = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
+    var maxOrbitRadius = d3.max(spaceJunkData.map(spaceJunkRecord => earthRadius + spaceJunkRecord.PERIGEE)); // Determine the maximum orbit distance from the earth.
 
     var radiusScale = d3.scaleLinear() // Create a scale for the radius.
         .domain([0, maxOrbitRadius])
@@ -31,16 +31,17 @@ window.onload = function () {
 
     var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
     theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-        .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
+        .attr("transform", earthTranslation) // Position the circle in the middle of the visualization.
         .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
 
-    for (var rowIndex = 0; rowIndex < data.length; ++rowIndex) { // Manually loop our data and add it to the visualization.
-        var row = data[rowIndex];
+    for (var rowIndex = 0; rowIndex < spaceJunkData.length; ++rowIndex) { // Manually loop our data and add it to the visualization.
+        var spaceJunkRecord = spaceJunkData[rowIndex];
         var spaceJunk = svgElement.append("g"); // Adding a group. This means we can have multiple sub-elements to comprise the visuals for a piece of space junk.
         spaceJunk.attr("class", "junk") // Set CSS clas so we can style our space junk.
             .attr("transform", function () { // Set the transform element to position the space junk in orbit around the 'earth'.
-                var orbitRadius = radiusScale(earthRadius + row.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
-                var point = pointOnCircle(orbitRadius, Math.random() * 360); // Choose a random position in orbit that is relative to the earth.
+                var orbitRadius = radiusScale(earthRadius + spaceJunkRecord.PERIGEE); // The distance from the center of the earth that the space junk is orbiting.
+                var randomAngle = Math.random() * 360;
+                var point = pointOnCircle(orbitRadius, randomAngle); // Choose a random position in orbit that is relative to the earth.
                 var x = (width/2) + point.x; // Translate the space junk coordinates into visualization-relative coordinates.
                 var y = (height/2) + point.y;
                 return "translate(" + x + ", " + y + ")" ; // Synthesize an SVG 'transform' attribute.
@@ -50,7 +51,7 @@ window.onload = function () {
     }
 };
 
-var data = [
+var spaceJunkData = [
     {
         "OBJECT_NAME": "NOAA 16 DEB",
         "PERIGEE": 849,

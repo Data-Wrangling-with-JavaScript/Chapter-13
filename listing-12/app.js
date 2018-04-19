@@ -16,56 +16,68 @@ window.onload = function () {
     var height = window.innerHeight;
 
     var earthRadius = 6371; // This is the real radius of the earth!
-    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
+    var earthTranslation = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
     var maxDistanceFromEarth = 6000; // Let's put a limit on what we can display.
 
     d3.json("data/us-space-junk.json")
-        .then(function (data) {
+        .then(function (spaceJunkData) {
 
-            var filteredData = data.filter(row => row.PERIGEE <= maxDistanceFromEarth); // Filter out data beyond our limit.
+            var filteredData = spaceJunkData.filter(spaceJunkRecord => spaceJunkRecord.PERIGEE <= maxDistanceFromEarth); // Filter out data beyond our limit.
 
-            data.forEach(function (row, rowIndex) {
-                row.id = rowIndex;
-                row.orbitAngle = Math.random() * 360;
+            filteredData.forEach(function (spaceJunkRecord, rowIndex) {
+                spaceJunkRecord.id = rowIndex;
+                spaceJunkRecord.orbitAngle = Math.random() * 360;
             });          
 
-            var maxOrbitRadius = d3.max(filteredData.map(x => earthRadius + x.PERIGEE)); // Determine the maximum orbit distance from the earth.
+            var maxOrbitRadius = d3.max(filteredData.map(spaceJunkRecord => earthRadius + spaceJunkRecord.PERIGEE)); // Determine the maximum orbit distance from the earth.
 
             var radiusScale = d3.scaleLinear() // Create a scale for the radius.
                 .domain([0, maxOrbitRadius])
                 .range([0, Math.min(height/2, width/2)]);
 
-            function computeSpaceJunkPosition (row, distance) { // Function to compute the position of space junk within the visualization, we need to reuse this now.
+            function computeSpaceJunkPosition (spaceJunkRecord, distance) { // Function to compute the position of space junk within the visualization, we need to reuse this now.
                 var orbitRadius = radiusScale(earthRadius + distance); // The distance from the center of the earth that the space junk is orbiting.
-                var point = pointOnCircle(orbitRadius, row.orbitAngle); // Choose a random position in orbit that is relative to the earth.
+                var point = pointOnCircle(orbitRadius, spaceJunkRecord.orbitAngle); // Choose a random position in orbit that is relative to the earth.
                 return { 
                     x: (width/2) + point.x, // Translate the space junk coordinates into visualization-relative coordinates., 
                     y: (height/2) + point.y 
                 };
             };
 
-            function addText (className, text, pos, offset) { // Helper function to add some hover text.
-                svgElement // Add hover text.
-                    .append("text") // Append the hover text to the end of the SVG so it is rendered over the top of everything else.
-                        .attr("class", className) // Id the text so we can remove it later.
-                        .attr("x", pos.x)
-                        .attr("y", pos.y + offset) // Offset the Y position slightly so the text is below the space junk.
-                        .text(text);
+            function spaceJunkTranslation (spaceJunkRecord, orbitalDistance) {
+                var pos = computeSpaceJunkPosition(spaceJunkRecord, orbitalDistance);
+                return "translate(" + pos.x + ", " + pos.y + ")" ;
+            };
+            
+            function spaceJunkTranslationStart (spaceJunkRecord) {
+                return spaceJunkTranslation(spaceJunkRecord, 0);
+            };
+            
+            function spaceJunkTranslationEnd (spaceJunkRecord) {
+                return spaceJunkTranslation(spaceJunkRecord, spaceJunkRecord.PERIGEE);
             };
 
-            function hover (row, index) { // Function called when a space junk is hovered.
+            function addText (className, text, pos, offset) { // Helper function to add some hover text.
+                svgElement.append("text") // Append the hover text to the end of the SVG so it is rendered over the top of everything else.
+                    .attr("class", className) // Id the text so we can remove it later.
+                    .attr("x", pos.x)
+                    .attr("y", pos.y + offset) // Offset the Y position slightly so the text is below the space junk.
+                    .text(text);
+            };
+
+            function hover (spaceJunkRecord, index) { // Function called when a space junk is hovered.
 
                 d3.select(this)
                     .select("circle")
                         .attr("r", 6); // Make the hovered space junk larger.
             
-                var pos = computeSpaceJunkPosition(row, row.PERIGEE);                
-                addText("hover-text hover-title", row.OBJECT_NAME, pos, 50);
-                addText("hover-text", "Size: " + row.RCS_SIZE, pos, 70);
-                addText("hover-text", "Launched: " + row.LAUNCH, pos, 85);
+                var pos = computeSpaceJunkPosition(spaceJunkRecord, spaceJunkRecord.PERIGEE);                
+                addText("hover-text hover-title", spaceJunkRecord.OBJECT_NAME, pos, 50);
+                addText("hover-text", "Size: " + spaceJunkRecord.RCS_SIZE, pos, 70);
+                addText("hover-text", "Launched: " + spaceJunkRecord.LAUNCH, pos, 85);
             };
             
-            function unhover (row, index) { // Function called when a space junk is unhovered.
+            function unhover (spaceJunkRecord, index) { // Function called when a space junk is unhovered.
             
                 d3.select(this)
                     .select("circle")
@@ -81,7 +93,7 @@ window.onload = function () {
         
             var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
             theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-                .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
+                .attr("transform", earthTranslation) // Position the circle in the middle of the visualization.
                 .attr("r", radiusScale(earthRadius)); // Set the radius the earth.
             
             var currentYear = 1957; // Current year in the animation.
@@ -94,28 +106,22 @@ window.onload = function () {
                 svgElement.select(".title-text") // Update the title text to to the current year.
                     .text(currentYear.toString());
 
-                var currentData = data.filter(row => moment(row.LAUNCH, "DD/MM/YYYY").year() <= currentYear); // Filter data up until the 'current year'.
+                var currentData = filteredData.filter(row => moment(row.LAUNCH, "DD/MM/YYYY").year() <= currentYear); // Filter data up until the 'current year'.
 
                 const spaceJunk = svgElement.selectAll("g") // Select all g elements.
-                    .data(currentData, function (row) { return row.id; }); // 'Join' our data to the selection.
+                    .data(currentData, function (spaceJunkRecord) { return spaceJunkRecord.id; }); // 'Join' our data to the selection.
                 spaceJunk.enter() // Specify what happens for each incoming data point.
                         .append("g") // Append a group element for each data point.
                         .on("mouseover", hover)
                         .on("mouseout", unhover)
-                        .attr("class", function  (row) { // Set CSS clas so we can style our space junk.
-                            return "junk " + row.RCS_SIZE;
+                        .attr("class", function  (spaceJunkRecord) { // Set CSS clas so we can style our space junk.
+                            return "junk " + spaceJunkRecord.RCS_SIZE;
                         })
-                        .attr("transform", function(row, index) { // Start the space junk at the edge of the earth.
-                            var pos = computeSpaceJunkPosition(row, 0);
-                            return "translate(" + pos.x + ", " + pos.y + ")" ;
-                        });
+                        .attr("transform", spaceJunkTranslationStart);
 
                 spaceJunk.transition() // Animate the space junk to its destination position.
                     .duration(1000)
-                    .attr("transform", function(row, index) {
-                        var pos = computeSpaceJunkPosition(row, row.PERIGEE);
-                        return "translate(" + pos.x + ", " + pos.y + ")" ;
-                    })
+                    .attr("transform", spaceJunkTranslationEnd)
                     .ease(d3.easeBackOut);
 
                 spaceJunk.append("circle") // Add a circle to represent the space junk.

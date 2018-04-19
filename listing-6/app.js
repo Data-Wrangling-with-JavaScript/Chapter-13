@@ -15,10 +15,10 @@ window.onload = function () {
         .attr("height", height);
 
     var earthRadius = 50; // Set the radius of the earth to 50 pixels.
-    var earthPosition = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
+    var earthTranslation = "translate(" + (width/2) + ", " + (height/2) + ")"; // Setup a translation to position the earth.
 
     var theEarth = svgElement.append("circle") // Add a circle to our visualization to represent the 'earth'.
     theEarth.attr("class", "earth") // Set the CSS class for the element to so that we can style our 'earth'.
-        .attr("transform", earthPosition) // Position the circle in the middle of the visualization.
+        .attr("transform", earthTranslation) // Position the circle in the middle of the visualization.
         .attr("r", earthRadius); // Set the radius the earth.
 };
