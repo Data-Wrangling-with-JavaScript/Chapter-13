@@ -8,6 +8,6 @@
 window.onload = function () {
 
     //
-    // Build your visualisation here.
+    // Build your visualization here.
     //
 };
